@@ -1,0 +1,36 @@
+﻿<Window x:Class="PcKod.UI.Views.FirmaEkleWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Yeni Firma Kaydı - PcKod" Height="350" Width="450" 
+        Background="#1A1D21" WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Button Content="⬅ İPTAL / GERİ DÖN" HorizontalAlignment="Left" 
+                Background="Transparent" Foreground="#666" BorderThickness="0" 
+                FontSize="11" Click="btnGeri_Click" Cursor="Hand" Margin="0,0,0,10"/>
+
+        <StackPanel Grid.Row="1" VerticalAlignment="Center">
+            <TextBlock Text="YENİ FİRMA / RESTORAN EKLE" Foreground="#00FF41" 
+                       FontSize="20" FontWeight="Bold" Margin="0,0,0,25" 
+                       HorizontalAlignment="Center"/>
+
+            <TextBlock Text="Firma / Müşteri Adı:" Foreground="#A0A0A0" Margin="0,0,0,5" FontSize="14"/>
+            <TextBox Name="txtFirmaAdi" Background="#21252B" Foreground="White" 
+                     BorderBrush="#00FF41" Padding="10" FontSize="16" FontWeight="SemiBold"/>
+
+            <Button Name="btnFirmaKaydet" Content="💾 FİRMAYI SİSTEME EKLE" 
+                    Background="#28A745" Foreground="White" Height="50" 
+                    FontWeight="Bold" FontSize="15" Margin="0,30,0,0" 
+                    BorderThickness="0" Click="btnFirmaKaydet_Click" Cursor="Hand"/>
+
+            <TextBlock Text="* Eklenen firmalar Toptan Satış ekranında otomatik görünecektir." 
+                       Foreground="#555" FontSize="10" Margin="0,15,0,0" 
+                       TextAlignment="Center" TextWrapping="Wrap"/>
+        </StackPanel>
+    </Grid>
+</Window>

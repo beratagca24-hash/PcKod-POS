@@ -1,0 +1,84 @@
+﻿<Window x:Class="PcKod.UI.Views.UrunListesiWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Ürün Yönetimi - PcKod" Height="650" Width="1050" WindowStartupLocation="CenterScreen">
+    <Grid Background="#1A1D21">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0" Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Button Content="⬅ ANA SAYFAYA DÖN" HorizontalAlignment="Left" Background="Transparent" Foreground="#666" BorderThickness="0" FontSize="12" Click="btnGeri_Click" Cursor="Hand" Margin="0,0,0,10"/>
+
+            <StackPanel Grid.Row="1" Margin="0,0,0,10">
+                <TextBlock Text="Ürün veya Barkod Ara:" Foreground="#00FF41" FontSize="12" Margin="0,0,0,5"/>
+                <TextBox Name="txtHizliAra" Background="#252525" Foreground="White" BorderBrush="#333" Padding="8" TextChanged="txtHizliAra_TextChanged"/>
+            </StackPanel>
+
+            <DataGrid Grid.Row="2" Name="dgUrunler" AutoGenerateColumns="False" Background="#21252B" RowBackground="#21252B" Foreground="White" SelectionChanged="dgUrunler_SelectionChanged" IsReadOnly="True">
+                <DataGrid.Resources>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="#252525"/>
+                        <Setter Property="Foreground" Value="#00FF41"/>
+                        <Setter Property="Padding" Value="10,5"/>
+                    </Style>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="Padding" Value="5"/>
+                    </Style>
+                </DataGrid.Resources>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Barkod" Binding="{Binding Barkod}" Width="100"/>
+                    <DataGridTextColumn Header="Ürün Adı" Binding="{Binding UrunAdi}" Width="2*"/>
+                    <DataGridTextColumn Header="Birim" Binding="{Binding BirimTipiMetni}" Width="80"/>
+                    <DataGridTextColumn Header="Alış" Binding="{Binding AlisFiyati, StringFormat=C2}" Width="*"/>
+                    <DataGridTextColumn Header="Satış" Binding="{Binding SatisFiyati, StringFormat=C2}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+
+        <StackPanel Grid.Column="1" Margin="10,20,20,20" Background="#21252B">
+            <StackPanel Margin="15">
+                <TextBlock Text="Ürün İşlemleri" FontSize="20" FontWeight="Bold" Foreground="#E1E1E1" Margin="0,0,0,20"/>
+                <TextBlock Text="Barkod No:" Foreground="#A0A0A0" Margin="0,0,0,5"/>
+                <TextBox Name="txtBarkod" Background="#1A1D21" Foreground="White" Padding="8" Margin="0,0,0,15"/>
+                <TextBlock Text="Ürün Adı:" Foreground="#A0A0A0" Margin="0,0,0,5"/>
+                <TextBox Name="txtUrunAdi" Background="#1A1D21" Foreground="White" Padding="8" Margin="0,0,0,15"/>
+                <Grid Margin="0,0,0,15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Alış:" Foreground="#A0A0A0"/>
+                        <TextBox Name="txtAlisFiyati" Background="#1A1D21" Foreground="White"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Satış:" Foreground="#A0A0A0"/>
+                        <TextBox Name="txtSatisFiyati" Background="#1A1D21" Foreground="White"/>
+                    </StackPanel>
+                </Grid>
+                <TextBlock Text="Satış Birimi:" Foreground="#A0A0A0"/>
+                <ComboBox Name="cmbBirim" Background="#1A1D21" Margin="0,0,0,25">
+                    <ComboBoxItem Content="Adet"/>
+                    <ComboBoxItem Content="Kilogram / Gram"/>
+                </ComboBox>
+                <Button Name="btnKaydet" Content="💾 Kaydet / Güncelle" Background="#28A745" Foreground="White" Height="45" Click="btnKaydet_Click" FontWeight="Bold"/>
+                <Button Name="btnSilIlk" Content="🗑️ Ürünü Sil" Background="#DC3545" Foreground="White" Height="35" Margin="0,15,0,0" Click="btnSilIlk_Click"/>
+                <StackPanel Name="pnlSilOnay" Visibility="Collapsed" Margin="0,10,0,0">
+                    <PasswordBox Name="txtSilSifre" Background="#1A1D21" Foreground="White" Padding="5"/>
+                    <Button Content="SİLİNMEYİ ONAYLA" Background="#C0392B" Foreground="White" Click="btnSilOnay_Click" Margin="0,5,0,0" Height="30" FontWeight="Bold"/>
+                    <Button Content="Vazgeç" Background="Transparent" Foreground="#666" Click="btnSilIptal_Click" BorderThickness="0"/>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>
