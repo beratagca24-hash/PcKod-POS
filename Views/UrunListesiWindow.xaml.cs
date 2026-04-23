@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using PcKod.UI.Models;
 using Microsoft.Data.Sqlite;
+using System.Globalization; // Olası fiyat işlemleri için eklendi
 
 namespace PcKod.UI.Views
 {
@@ -45,8 +46,8 @@ namespace PcKod.UI.Views
             if (dgUrunler.SelectedItem is Urun s)
             {
                 txtBarkod.Text = s.Barkod; txtUrunAdi.Text = s.UrunAdi;
-                txtAlisFiyati.Text = s.AlisFiyati.ToString("N2");
-                txtSatisFiyati.Text = s.SatisFiyati.ToString("N2");
+                txtAlisFiyati.Text = s.AlisFiyati.ToString("N2", new CultureInfo("tr-TR"));
+                txtSatisFiyati.Text = s.SatisFiyati.ToString("N2", new CultureInfo("tr-TR"));
                 cmbBirim.SelectedIndex = s.BirimTipi;
             }
         }
@@ -67,6 +68,7 @@ namespace PcKod.UI.Views
         }
 
         private void btnSilIlk_Click(object sender, RoutedEventArgs e) { if (dgUrunler.SelectedItem != null) pnlSilOnay.Visibility = Visibility.Visible; }
+
         private void btnSilOnay_Click(object sender, RoutedEventArgs e)
         {
             if (txtSilSifre.Password == "1234")
@@ -76,6 +78,7 @@ namespace PcKod.UI.Views
                 UrunleriYukle(); btnSilIptal_Click(null, null);
             }
         }
+
         private void btnSilIptal_Click(object sender, RoutedEventArgs e) { pnlSilOnay.Visibility = Visibility.Collapsed; txtSilSifre.Clear(); }
         private void Temizle() { txtBarkod.Clear(); txtUrunAdi.Clear(); txtAlisFiyati.Clear(); txtSatisFiyati.Clear(); cmbBirim.SelectedIndex = 0; }
     }

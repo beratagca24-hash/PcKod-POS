@@ -22,8 +22,25 @@
 
             <StackPanel Grid.Column="0" Margin="0,0,15,0">
                 <TextBlock Text="Müşteri / Firma Seçin:" Foreground="#A0A0A0" Margin="0,0,0,5"/>
-                <ComboBox Name="cmbFirmalar" DisplayMemberPath="FirmaAdi" SelectedValuePath="Id" 
-                          Background="#1E1E1E" Foreground="White" Height="35" Margin="0,0,0,20"/>
+                <Grid Margin="0,0,0,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <ComboBox Name="cmbFirmalar" Grid.Column="0" DisplayMemberPath="FirmaAdi" SelectedValuePath="Id" 
+                              Background="White" Foreground="Black" FontSize="16" Height="35" Margin="0,0,10,0">
+                        <ComboBox.ItemContainerStyle>
+                            <Style TargetType="ComboBoxItem">
+                                <Setter Property="Foreground" Value="Black"/>
+                                <Setter Property="Background" Value="White"/>
+                            </Style>
+                        </ComboBox.ItemContainerStyle>
+                    </ComboBox>
+
+                    <Button Name="btnFirmaEkle" Grid.Column="1" Content="➕ Yeni Firma" Background="#34495E" 
+                            Foreground="White" FontWeight="Bold" Padding="15,0" Cursor="Hand" Click="btnFirmaEkle_Click"/>
+                </Grid>
 
                 <TextBlock Text="Ürün Adı Yazın (Hızlı Arama):" Foreground="#00FF41" Margin="0,0,0,5" FontWeight="Bold"/>
                 <TextBox Name="txtUrunAra" Background="#252525" Foreground="White" BorderBrush="#00FF41" 
@@ -39,14 +56,16 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Text="{Binding UrunAdi}" Foreground="White" FontWeight="Bold" Grid.Column="0"/>
-                                <TextBlock Text="{Binding SatisFiyati, StringFormat=C2}" Foreground="#00FF41" Grid.Column="1"/>
+                                <TextBlock Text="{Binding SatisFiyati, StringFormat='₺\{0:N2\}'}" Foreground="#00FF41" Grid.Column="1"/>
                             </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
 
                 <TextBlock Text="Toptan Satış Sepeti" Foreground="#A0A0A0" Margin="0,20,0,5"/>
+
                 <DataGrid Name="dgToptanSepet" Height="300" Background="#1E1E1E" Foreground="White" 
+                          RowBackground="#1E1E1E" AlternatingRowBackground="#252525" CellEditEnding="dgToptanSepet_CellEditEnding"
                           AutoGenerateColumns="False" CanUserAddRows="False" BorderThickness="0" FontSize="16">
                     <DataGrid.Resources>
                         <Style TargetType="DataGridColumnHeader">
@@ -60,10 +79,10 @@
                         </Style>
                     </DataGrid.Resources>
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Ürün Adı" Binding="{Binding UrunAdi}" Width="2*"/>
-                        <DataGridTextColumn Header="Miktar" Binding="{Binding Miktar}" Width="*"/>
-                        <DataGridTextColumn Header="Birim Fiyat" Binding="{Binding BirimFiyat, StringFormat=C2}" Width="*"/>
-                        <DataGridTextColumn Header="Toplam" Binding="{Binding ToplamTutar, StringFormat=C2}" IsReadOnly="True" Width="*"/>
+                        <DataGridTextColumn Header="Ürün Adı" Binding="{Binding UrunAdi}" IsReadOnly="True" Width="2*"/>
+                        <DataGridTextColumn Header="Miktar" Binding="{Binding Miktar, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+                        <DataGridTextColumn Header="Birim Fiyat" Binding="{Binding BirimFiyat, StringFormat='₺\{0:N2\}', UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+                        <DataGridTextColumn Header="Toplam" Binding="{Binding ToplamTutar, StringFormat='₺\{0:N2\}'}" IsReadOnly="True" Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </StackPanel>

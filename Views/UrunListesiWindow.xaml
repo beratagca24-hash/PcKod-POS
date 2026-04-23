@@ -38,8 +38,8 @@
                     <DataGridTextColumn Header="Barkod" Binding="{Binding Barkod}" Width="100"/>
                     <DataGridTextColumn Header="Ürün Adı" Binding="{Binding UrunAdi}" Width="2*"/>
                     <DataGridTextColumn Header="Birim" Binding="{Binding BirimTipiMetni}" Width="80"/>
-                    <DataGridTextColumn Header="Alış" Binding="{Binding AlisFiyati, StringFormat=C2}" Width="*"/>
-                    <DataGridTextColumn Header="Satış" Binding="{Binding SatisFiyati, StringFormat=C2}" Width="*"/>
+                    <DataGridTextColumn Header="Alış" Binding="{Binding AlisFiyati, StringFormat='₺\{0:N2\}'}" Width="*"/>
+                    <DataGridTextColumn Header="Satış" Binding="{Binding SatisFiyati, StringFormat='₺\{0:N2\}'}" Width="*"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

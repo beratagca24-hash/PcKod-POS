@@ -22,13 +22,8 @@ namespace PcKod.UI.Views
             FirmalariYukle();
         }
 
-        // --- NAVİGASYON ---
-        private void btnGeri_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close(); // Ana sayfaya döner
-        }
+        private void btnGeri_Click(object sender, RoutedEventArgs e) => this.Close();
 
-        // --- VERİ YÜKLEME ---
         private void FirmalariYukle()
         {
             var firmalar = new List<Firma>();
@@ -47,7 +42,6 @@ namespace PcKod.UI.Views
             cmbFirmalar.ItemsSource = firmalar;
         }
 
-        // --- ÜRÜN ARAMA ---
         private void txtUrunAra_TextChanged(object sender, TextChangedEventArgs e)
         {
             string ara = txtUrunAra.Text.Trim();
@@ -82,7 +76,13 @@ namespace PcKod.UI.Views
             }
         }
 
-        // --- SATIŞI TAMAMLA ---
+        // Tabloda hücre düzenlemesi bittiğinde genel toplamı anında günceller
+        private void dgToptanSepet_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            // Hücredeki verinin modele işlenmesi için çok kısa bir süre bekleyip hesaplatıyoruz
+            Dispatcher.BeginInvoke(new Action(() => ToplamHesapla()), System.Windows.Threading.DispatcherPriority.Background);
+        }
+
         private void btnToptanBitir_Click(object sender, RoutedEventArgs e)
         {
             if (cmbFirmalar.SelectedItem == null || ToptanSepet.Count == 0)
@@ -102,10 +102,7 @@ namespace PcKod.UI.Views
                 {
                     string sqlTutar = toplamTutar.ToString(CultureInfo.InvariantCulture);
 
-                    // 1. Satış Kaydı
                     new SqliteCommand($"INSERT INTO Satislar (UrunAdi, Miktar, ToplamTutar, OdemeYontemi, Tarih, FirmaId) VALUES ('Toptan Satış', 1, {sqlTutar}, 'Veresiye', '{DateTime.Now:yyyy-MM-dd}', {seciliFirma.Id})", db, tr).ExecuteNonQuery();
-
-                    // 2. Borç Güncelleme
                     new SqliteCommand($"UPDATE Firmalar SET ToplamBorc = ToplamBorc + {sqlTutar} WHERE Id = {seciliFirma.Id}", db, tr).ExecuteNonQuery();
 
                     tr.Commit();
@@ -119,7 +116,14 @@ namespace PcKod.UI.Views
         private void ToplamHesapla()
         {
             decimal toplam = ToptanSepet.Sum(s => s.ToplamTutar);
-            if (txtToptanToplam != null) txtToptanToplam.Text = toplam.ToString("C2");
+            if (txtToptanToplam != null) txtToptanToplam.Text = toplam.ToString("C2", new CultureInfo("tr-TR"));
+        }
+
+        private void btnFirmaEkle_Click(object sender, RoutedEventArgs e)
+        {
+            var frmEkle = new FirmaEkleWindow();
+            frmEkle.ShowDialog();
+            FirmalariYukle();
         }
     }
 }

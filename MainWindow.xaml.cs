@@ -9,6 +9,7 @@ using Microsoft.Data.Sqlite;
 using PcKod.UI.Views;
 using ClosedXML.Excel;
 using System.IO;
+using System.Globalization; // EKLENDİ
 
 namespace PcKod.UI
 {
@@ -175,10 +176,38 @@ namespace PcKod.UI
         private void btnNakit_Click(object sender, RoutedEventArgs e) => SatisiTamamla("Nakit");
         private void btnKart_Click(object sender, RoutedEventArgs e) => SatisiTamamla("Kart");
         private void btnRaporIptal_Click(object sender, RoutedEventArgs e) { pnlRaporSifre.Visibility = Visibility.Collapsed; btnRaporHazirlik.Visibility = Visibility.Visible; txtRaporSifre.Clear(); }
-        private void ToplamHesapla() { txtGenelToplam.Text = Sepet.Sum(s => s.ToplamTutar).ToString("C2"); }
+
+        // GÜNCELLENDİ: Para Birimi Zorunlu TL
+        private void ToplamHesapla() { txtGenelToplam.Text = Sepet.Sum(s => s.ToplamTutar).ToString("C2", new CultureInfo("tr-TR")); }
+
         private void btnUrunListesi_Click(object sender, RoutedEventArgs e) => new UrunListesiWindow().ShowDialog();
-        private void btnFirmaEkle_Click(object sender, RoutedEventArgs e) => new FirmaEkleWindow().ShowDialog();
+        private void btnStokSayfasi_Click(object sender, RoutedEventArgs e) => new StokSayfasi().ShowDialog();
         private void btnToptanSatis_Click(object sender, RoutedEventArgs e) => new ToptanSatisWindow().ShowDialog();
         private void btnSepetiTemizle_Click(object sender, RoutedEventArgs e) { Sepet.Clear(); ToplamHesapla(); }
+
+        private void btnManuelEkle_Click(object sender, RoutedEventArgs e)
+        {
+            string urunAdi = txtManuelUrunAdi.Text.Trim();
+            string fiyatMetni = txtManuelFiyat.Text.Replace(".", ",");
+
+            if (string.IsNullOrEmpty(urunAdi) || !decimal.TryParse(fiyatMetni, out decimal fiyat))
+            {
+                MessageBox.Show("Lütfen geçerli bir ürün adı ve fiyat(örn: 50,50) giriniz.");
+                return;
+            }
+
+            Sepet.Add(new SepetUrun
+            {
+                Barkod = "MANUEL",
+                UrunAdi = urunAdi,
+                BirimFiyat = fiyat,
+                Miktar = 1,
+                BirimTipi = 0
+            });
+
+            txtManuelUrunAdi.Clear();
+            txtManuelFiyat.Clear();
+            ToplamHesapla();
+        }
     }
 }
