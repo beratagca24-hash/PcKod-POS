@@ -65,7 +65,7 @@ Proje, kodun ölçeklenebilirliğini ve bakım kolaylığını sağlamak adına 
   /Models       # Urun.cs, Firma.cs, SepetUrun.cs (Veri modelleri)
   /Views        # XAML arayüzleri ve UI arka plan kodları
   App.xaml      # Uygulama yaşam döngüsü
-  
+  ```
   ⚙️ Kurulum ve Derleme
 Sistemi yerel ortamda çalıştırmak için aşağıdaki adımları izleyebilirsiniz:
 
