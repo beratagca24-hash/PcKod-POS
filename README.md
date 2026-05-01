@@ -69,7 +69,7 @@ Proje, kodun ölçeklenebilirliğini ve bakım kolaylığını sağlamak adına 
   ⚙️ Kurulum ve Derleme
 Sistemi yerel ortamda çalıştırmak için aşağıdaki adımları izleyebilirsiniz:
 
-Bash
+```bash
 # 1. Depoyu yerel makinenize klonlayın
 git clone [https://github.com/beratagca24-hash/PcKod.UI.git](https://github.com/beratagca24-hash/PcKod.UI.git)
 
@@ -81,12 +81,12 @@ cd PcKod.UI
 # 5. Projeyi 'Release' konfigürasyonunda derleyin ve çalıştırın.
 Erişim Notu:
 İlk kurulum aşamasında uygulamanın Kritik Ayarlar ve Raporlama bölümlerine erişim için varsayılan yetkili şifresi 1234 olarak yapılandırılmıştır.
-
+ ```
 👨‍💻 Geliştirici
 Berat Ağca
 
 GitHub: @beratagca24-hash
 
-LinkedIn: [Berat Ağca](https://www.linkedin.com/in/)berat-ağca-0a61a5342/
+LinkedIn: [Berat Ağca]
 
 (Not: Sistemin terazi entegrasyonu ve kararlılık testleri, pilot bölge olarak Öz Biga Et ve Şarküteri altyapısında gerçekleştirilmiştir.)
