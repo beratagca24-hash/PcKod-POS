@@ -1,129 +1,110 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Globalization;
 using Microsoft.Data.Sqlite;
 using PcKod.UI.Models;
-using System.Globalization;
+using PcKod.UI.Data;
 
 namespace PcKod.UI.Views
 {
     public partial class ToptanSatisWindow : Window
     {
-        public ObservableCollection<SepetUrun> ToptanSepet { get; set; } = new ObservableCollection<SepetUrun>();
-        private const string ConnectionString = "Data Source=PcKod.db";
+        public ObservableCollection<SepetUrun> WholesaleCart { get; set; } = new ObservableCollection<SepetUrun>();
 
         public ToptanSatisWindow()
         {
             InitializeComponent();
-            dgToptanSepet.ItemsSource = ToptanSepet;
-            FirmalariYukle();
+            dgToptanSepet.ItemsSource = WholesaleCart;
+            InitCompanies();
         }
 
         private void btnGeri_Click(object sender, RoutedEventArgs e) => this.Close();
 
-        private void FirmalariYukle()
+        private void InitCompanies()
         {
-            var firmalar = new List<Firma>();
-            using (var db = new SqliteConnection(ConnectionString))
+            var list = new System.Collections.Generic.List<Firma>();
+            using (var db = new SqliteConnection(DatabaseHelper.ConnectionString))
             {
                 db.Open();
-                var cmd = new SqliteCommand("SELECT * FROM Firmalar", db);
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        firmalar.Add(new Firma { Id = reader.GetInt32(0), FirmaAdi = reader.GetString(1) });
-                    }
-                }
+                var rdr = new SqliteCommand("SELECT * FROM Firmalar", db).ExecuteReader();
+                while (rdr.Read()) list.Add(new Firma { Id = rdr.GetInt32(0), FirmaAdi = rdr.GetString(1) });
             }
-            cmbFirmalar.ItemsSource = firmalar;
+            cmbFirmalar.ItemsSource = list;
         }
 
         private void txtUrunAra_TextChanged(object sender, TextChangedEventArgs e)
         {
-            string ara = txtUrunAra.Text.Trim();
-            if (ara.Length < 2) { lstAramaSonuclari.Visibility = Visibility.Collapsed; return; }
+            string q = txtUrunAra.Text.Trim();
+            if (q.Length < 2) { lstAramaSonuclari.Visibility = Visibility.Collapsed; return; }
 
-            var sonuclar = new List<Urun>();
-            using (var db = new SqliteConnection(ConnectionString))
+            var results = new System.Collections.Generic.List<Urun>();
+            using (var db = new SqliteConnection(DatabaseHelper.ConnectionString))
             {
                 db.Open();
-                var cmd = new SqliteCommand("SELECT * FROM Urunler WHERE UrunAdi LIKE @p", db);
-                cmd.Parameters.AddWithValue("@p", "%" + ara + "%");
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        sonuclar.Add(new Urun { Barkod = reader.GetString(1), UrunAdi = reader.GetString(2), SatisFiyati = reader.GetDecimal(4) });
-                    }
-                }
+                var cmd = new SqliteCommand("SELECT Barkod, UrunAdi, SatisFiyati FROM Urunler WHERE UrunAdi LIKE @p", db);
+                cmd.Parameters.AddWithValue("@p", $"%{q}%");
+                var rdr = cmd.ExecuteReader();
+                while (rdr.Read()) results.Add(new Urun { Barkod = rdr.GetString(0), UrunAdi = rdr.GetString(1), SatisFiyati = rdr.GetDecimal(2) });
             }
-            if (sonuclar.Count > 0) { lstAramaSonuclari.ItemsSource = sonuclar; lstAramaSonuclari.Visibility = Visibility.Visible; }
-            else { lstAramaSonuclari.Visibility = Visibility.Collapsed; }
+            lstAramaSonuclari.ItemsSource = results;
+            lstAramaSonuclari.Visibility = results.Any() ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void lstAramaSonuclari_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (lstAramaSonuclari.SelectedItem is Urun secili)
+            if (lstAramaSonuclari.SelectedItem is Urun item)
             {
-                ToptanSepet.Add(new SepetUrun { Barkod = secili.Barkod, UrunAdi = secili.UrunAdi, BirimFiyat = secili.SatisFiyati, Miktar = 1 });
-                txtUrunAra.Clear();
-                lstAramaSonuclari.Visibility = Visibility.Collapsed;
-                ToplamHesapla();
+                WholesaleCart.Add(new SepetUrun { Barkod = item.Barkod, UrunAdi = item.UrunAdi, BirimFiyat = item.SatisFiyati, Miktar = 1 });
+                txtUrunAra.Clear(); lstAramaSonuclari.Visibility = Visibility.Collapsed;
+                UpdateWholesaleTotal();
             }
         }
 
-        // Tabloda hücre düzenlemesi bittiğinde genel toplamı anında günceller
-        private void dgToptanSepet_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
-        {
-            // Hücredeki verinin modele işlenmesi için çok kısa bir süre bekleyip hesaplatıyoruz
-            Dispatcher.BeginInvoke(new Action(() => ToplamHesapla()), System.Windows.Threading.DispatcherPriority.Background);
-        }
+        private void dgToptanSepet_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e) => Dispatcher.BeginInvoke(new Action(() => UpdateWholesaleTotal()), System.Windows.Threading.DispatcherPriority.Background);
 
         private void btnToptanBitir_Click(object sender, RoutedEventArgs e)
         {
-            if (cmbFirmalar.SelectedItem == null || ToptanSepet.Count == 0)
-            {
-                MessageBox.Show("Lütfen firma ve ürün seçin!");
-                return;
-            }
+            if (cmbFirmalar.SelectedItem == null || !WholesaleCart.Any()) return;
 
-            var seciliFirma = (Firma)cmbFirmalar.SelectedItem;
-            decimal toplamTutar = ToptanSepet.Sum(s => s.ToplamTutar);
+            var firma = (Firma)cmbFirmalar.SelectedItem;
+            decimal total = WholesaleCart.Sum(s => s.ToplamTutar);
 
-            using (var db = new SqliteConnection(ConnectionString))
+            using (var db = new SqliteConnection(DatabaseHelper.ConnectionString))
             {
                 db.Open();
-                var tr = db.BeginTransaction();
-                try
+                using (var tr = db.BeginTransaction())
                 {
-                    string sqlTutar = toplamTutar.ToString(CultureInfo.InvariantCulture);
+                    try
+                    {
+                        var cmd = new SqliteCommand("INSERT INTO Satislar (UrunAdi, Miktar, ToplamTutar, OdemeYontemi, Tarih, FirmaId) VALUES ('Toptan Satış', 1, @a, 'Veresiye', @d, @f)", db, tr);
+                        cmd.Parameters.AddWithValue("@a", total.ToString(CultureInfo.InvariantCulture));
+                        cmd.Parameters.AddWithValue("@d", DateTime.Now.ToString("yyyy-MM-dd"));
+                        cmd.Parameters.AddWithValue("@f", firma.Id);
+                        cmd.ExecuteNonQuery();
 
-                    new SqliteCommand($"INSERT INTO Satislar (UrunAdi, Miktar, ToplamTutar, OdemeYontemi, Tarih, FirmaId) VALUES ('Toptan Satış', 1, {sqlTutar}, 'Veresiye', '{DateTime.Now:yyyy-MM-dd}', {seciliFirma.Id})", db, tr).ExecuteNonQuery();
-                    new SqliteCommand($"UPDATE Firmalar SET ToplamBorc = ToplamBorc + {sqlTutar} WHERE Id = {seciliFirma.Id}", db, tr).ExecuteNonQuery();
+                        var debtCmd = new SqliteCommand("UPDATE Firmalar SET ToplamBorc = ToplamBorc + @a WHERE Id = @f", db, tr);
+                        debtCmd.Parameters.AddWithValue("@a", total.ToString(CultureInfo.InvariantCulture));
+                        debtCmd.Parameters.AddWithValue("@f", firma.Id);
+                        debtCmd.ExecuteNonQuery();
 
-                    tr.Commit();
-                    MessageBox.Show("Satış başarıyla borca kaydedildi!");
-                    this.Close();
+                        tr.Commit();
+                        MessageBox.Show("Cari hesaba borç kaydedildi.");
+                        this.Close();
+                    }
+                    catch (Exception ex) { tr.Rollback(); MessageBox.Show(ex.Message); }
                 }
-                catch (Exception ex) { tr.Rollback(); MessageBox.Show("Hata: " + ex.Message); }
             }
         }
 
-        private void ToplamHesapla()
+        private void UpdateWholesaleTotal()
         {
-            decimal toplam = ToptanSepet.Sum(s => s.ToplamTutar);
-            if (txtToptanToplam != null) txtToptanToplam.Text = toplam.ToString("C2", new CultureInfo("tr-TR"));
+            decimal total = WholesaleCart.Sum(s => s.ToplamTutar);
+            if (txtToptanToplam != null) txtToptanToplam.Text = total.ToString("C2", new CultureInfo("tr-TR"));
         }
 
-        private void btnFirmaEkle_Click(object sender, RoutedEventArgs e)
-        {
-            var frmEkle = new FirmaEkleWindow();
-            frmEkle.ShowDialog();
-            FirmalariYukle();
-        }
+        private void btnFirmaEkle_Click(object sender, RoutedEventArgs e) { new FirmaEkleWindow().ShowDialog(); InitCompanies(); }
     }
 }

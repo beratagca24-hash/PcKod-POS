@@ -3,116 +3,88 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Data.Sqlite;
+using PcKod.UI.Data;
 
 namespace PcKod.UI.Views
 {
     public partial class StokSayfasi : Window
     {
-        private const string ConnectionString = "Data Source=PcKod.db";
-        private string _seciliBarkod = "";
+        private string _activeBarcode = string.Empty;
 
         public StokSayfasi()
         {
             InitializeComponent();
-            StoklariYukle();
+            SyncInventory();
         }
 
-        private void StoklariYukle(string arama = "")
+        private void SyncInventory(string filter = "")
         {
-            var stokListesi = new List<StokGorunum>();
+            var results = new List<StokGorunum>();
 
-            using (var db = new SqliteConnection(ConnectionString))
+            using (var db = new SqliteConnection(DatabaseHelper.ConnectionString))
             {
                 db.Open();
                 string sql = "SELECT Barkod, UrunAdi, StokMiktari FROM Urunler";
-
-                if (!string.IsNullOrEmpty(arama))
-                    sql += " WHERE UrunAdi LIKE @p OR Barkod LIKE @p";
-
+                if (!string.IsNullOrEmpty(filter)) sql += " WHERE UrunAdi LIKE @p OR Barkod LIKE @p";
                 sql += " ORDER BY StokMiktari ASC";
 
-                var cmd = new SqliteCommand(sql, db);
-
-                if (!string.IsNullOrEmpty(arama))
-                    cmd.Parameters.AddWithValue("@p", "%" + arama + "%");
-
-                using (var reader = cmd.ExecuteReader())
+                using (var cmd = new SqliteCommand(sql, db))
                 {
-                    while (reader.Read())
+                    if (!string.IsNullOrEmpty(filter)) cmd.Parameters.AddWithValue("@p", $"%{filter}%");
+                    using (var rdr = cmd.ExecuteReader())
                     {
-                        stokListesi.Add(new StokGorunum
+                        while (rdr.Read())
                         {
-                            Barkod = reader.IsDBNull(0) ? "" : reader.GetString(0),
-                            UrunAdi = reader.IsDBNull(1) ? "" : reader.GetString(1),
-                            StokMiktari = reader.IsDBNull(2) ? 0 : reader.GetDouble(2)
-                        });
+                            results.Add(new StokGorunum
+                            {
+                                Barkod = rdr.IsDBNull(0) ? "" : rdr.GetString(0),
+                                UrunAdi = rdr.IsDBNull(1) ? "" : rdr.GetString(1),
+                                StokMiktari = rdr.IsDBNull(2) ? 0 : rdr.GetDouble(2)
+                            });
+                        }
                     }
                 }
             }
-            dgStok.ItemsSource = stokListesi;
+            dgStok.ItemsSource = results;
         }
 
-        private void txtStokAra_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            StoklariYukle(txtStokAra.Text.Trim());
-        }
+        private void txtStokAra_TextChanged(object sender, TextChangedEventArgs e) => SyncInventory(txtStokAra.Text.Trim());
 
         private void dgStok_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (dgStok.SelectedItem is StokGorunum secili)
+            if (dgStok.SelectedItem is StokGorunum item)
             {
-                _seciliBarkod = secili.Barkod;
-                txtSeciliUrun.Text = secili.UrunAdi;
-                txtMevcutStok.Text = secili.StokMiktari.ToString();
-                txtYeniStok.Clear(); // Önceden mevcudu yazıyordu, şimdi boş geliyor ki kullanıcı sadece geleni yazsın
-                txtYeniStok.Focus();
+                _activeBarcode = item.Barkod;
+                txtSeciliUrun.Text = item.UrunAdi;
+                txtMevcutStok.Text = item.StokMiktari.ToString("N2");
+                txtYeniStok.Clear(); txtYeniStok.Focus();
             }
         }
 
         private void btnStokGuncelle_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(_seciliBarkod))
-            {
-                MessageBox.Show("Lütfen listeden bir ürün seçin.");
-                return;
-            }
+            if (string.IsNullOrEmpty(_activeBarcode)) { MessageBox.Show("Önce ürünü seçin."); return; }
 
-            string girilenStok = txtYeniStok.Text.Replace(".", ",");
-
-            if (double.TryParse(girilenStok, out double eklenenMal))
+            if (double.TryParse(txtYeniStok.Text.Replace(".", ","), out double addedAmount))
             {
-                using (var db = new SqliteConnection(ConnectionString))
+                using (var db = new SqliteConnection(DatabaseHelper.ConnectionString))
                 {
                     db.Open();
-                    // ÖNEMLİ: Eşittir değil, mevcut stoğa ekleme (+) yapıyoruz
                     var cmd = new SqliteCommand("UPDATE Urunler SET StokMiktari = StokMiktari + @m WHERE Barkod = @b", db);
-                    cmd.Parameters.AddWithValue("@m", eklenenMal);
-                    cmd.Parameters.AddWithValue("@b", _seciliBarkod);
+                    cmd.Parameters.AddWithValue("@m", addedAmount);
+                    cmd.Parameters.AddWithValue("@b", _activeBarcode);
                     cmd.ExecuteNonQuery();
                 }
-
-                MessageBox.Show($"{eklenenMal} miktar/kg stoğa başarıyla eklendi.");
-
-                txtStokAra.Clear();
-                txtSeciliUrun.Clear();
-                txtMevcutStok.Clear();
-                txtYeniStok.Clear();
-                _seciliBarkod = "";
-
-                StoklariYukle();
+                MessageBox.Show("Stok envanteri güncellendi.", "Başarılı");
+                ResetView();
+                SyncInventory();
             }
-            else
-            {
-                MessageBox.Show("Lütfen geçerli bir sayı girin.");
-            }
+            else MessageBox.Show("Geçerli bir miktar girin.");
         }
 
-        // YENİ: Analiz Sayfasını Aç
-        private void btnAnaliz_Click(object sender, RoutedEventArgs e)
-        {
-            var analiz = new AnalizWindow();
-            analiz.ShowDialog();
-        }
+        private void ResetView() { txtStokAra.Clear(); txtSeciliUrun.Clear(); txtMevcutStok.Clear(); txtYeniStok.Clear(); _activeBarcode = ""; }
+
+        private void btnAnaliz_Click(object sender, RoutedEventArgs e) => new AnalizWindow().ShowDialog();
     }
 
     public class StokGorunum
