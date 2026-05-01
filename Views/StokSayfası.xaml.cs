@@ -9,7 +9,7 @@ namespace PcKod.UI.Views
     public partial class StokSayfasi : Window
     {
         private const string ConnectionString = "Data Source=PcKod.db";
-        private string _seciliBarkod = ""; // Güncellenecek ürünün barkodunu tutmak için
+        private string _seciliBarkod = "";
 
         public StokSayfasi()
         {
@@ -17,7 +17,6 @@ namespace PcKod.UI.Views
             StoklariYukle();
         }
 
-        // Arama özelliği eklendi
         private void StoklariYukle(string arama = "")
         {
             var stokListesi = new List<StokGorunum>();
@@ -65,7 +64,8 @@ namespace PcKod.UI.Views
                 _seciliBarkod = secili.Barkod;
                 txtSeciliUrun.Text = secili.UrunAdi;
                 txtMevcutStok.Text = secili.StokMiktari.ToString();
-                txtYeniStok.Text = secili.StokMiktari.ToString();
+                txtYeniStok.Clear(); // Önceden mevcudu yazıyordu, şimdi boş geliyor ki kullanıcı sadece geleni yazsın
+                txtYeniStok.Focus();
             }
         }
 
@@ -77,23 +77,22 @@ namespace PcKod.UI.Views
                 return;
             }
 
-            // Noktalı veya virgüllü girişleri doğru okuması için Replace
             string girilenStok = txtYeniStok.Text.Replace(".", ",");
 
-            if (double.TryParse(girilenStok, out double yeniStok))
+            if (double.TryParse(girilenStok, out double eklenenMal))
             {
                 using (var db = new SqliteConnection(ConnectionString))
                 {
                     db.Open();
-                    var cmd = new SqliteCommand("UPDATE Urunler SET StokMiktari = @m WHERE Barkod = @b", db);
-                    cmd.Parameters.AddWithValue("@m", yeniStok);
+                    // ÖNEMLİ: Eşittir değil, mevcut stoğa ekleme (+) yapıyoruz
+                    var cmd = new SqliteCommand("UPDATE Urunler SET StokMiktari = StokMiktari + @m WHERE Barkod = @b", db);
+                    cmd.Parameters.AddWithValue("@m", eklenenMal);
                     cmd.Parameters.AddWithValue("@b", _seciliBarkod);
                     cmd.ExecuteNonQuery();
                 }
 
-                MessageBox.Show("Stok başarıyla güncellendi.");
+                MessageBox.Show($"{eklenenMal} miktar/kg stoğa başarıyla eklendi.");
 
-                // Ekranı temizle ve listeyi yenile
                 txtStokAra.Clear();
                 txtSeciliUrun.Clear();
                 txtMevcutStok.Clear();
@@ -104,8 +103,15 @@ namespace PcKod.UI.Views
             }
             else
             {
-                MessageBox.Show("Lütfen geçerli bir miktar girin.");
+                MessageBox.Show("Lütfen geçerli bir sayı girin.");
             }
+        }
+
+        // YENİ: Analiz Sayfasını Aç
+        private void btnAnaliz_Click(object sender, RoutedEventArgs e)
+        {
+            var analiz = new AnalizWindow();
+            analiz.ShowDialog();
         }
     }
 

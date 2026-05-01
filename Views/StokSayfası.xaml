@@ -10,6 +10,7 @@
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
 
+        <!-- Sol Taraf: Stok Listesi ve Arama -->
         <Grid Grid.Column="0" Margin="20">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -17,7 +18,14 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Text="STOK DURUMU" Foreground="#00FF41" FontSize="24" FontWeight="Bold" Margin="0,0,0,15"/>
+            <Grid Grid.Row="0" Margin="0,0,0,15">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="STOK DURUMU" Foreground="#00FF41" FontSize="24" FontWeight="Bold" VerticalAlignment="Center"/>
+                <Button Name="btnAnaliz" Grid.Column="1" Content="📊 30 GÜNLÜK ANALİZ" Background="#F39C12" Foreground="White" Height="40" Padding="15,0" FontWeight="Bold" Cursor="Hand" BorderThickness="0" Click="btnAnaliz_Click"/>
+            </Grid>
 
             <StackPanel Grid.Row="1" Margin="0,0,0,10">
                 <TextBlock Text="Ürün veya Barkod Ara:" Foreground="#A0A0A0" FontSize="12" Margin="0,0,0,5"/>
@@ -46,9 +54,10 @@
             </DataGrid>
         </Grid>
 
+        <!-- Sağ Taraf: Stok Güncelleme Paneli -->
         <StackPanel Grid.Column="1" Margin="10,20,20,20" Background="#21252B">
             <StackPanel Margin="15">
-                <TextBlock Text="Stok Güncelle" FontSize="20" FontWeight="Bold" Foreground="#E1E1E1" Margin="0,0,0,20"/>
+                <TextBlock Text="Stok Girişi (Mal Kabul)" FontSize="20" FontWeight="Bold" Foreground="#E1E1E1" Margin="0,0,0,20"/>
 
                 <TextBlock Text="Seçili Ürün:" Foreground="#A0A0A0" Margin="0,0,0,5"/>
                 <TextBox Name="txtSeciliUrun" Background="#1A1D21" Foreground="#00FF41" IsReadOnly="True" Padding="8" Margin="0,0,0,15" FontWeight="Bold"/>
@@ -56,10 +65,10 @@
                 <TextBlock Text="Mevcut Stok:" Foreground="#A0A0A0" Margin="0,0,0,5"/>
                 <TextBox Name="txtMevcutStok" Background="#1A1D21" Foreground="White" IsReadOnly="True" Padding="8" Margin="0,0,0,15"/>
 
-                <TextBlock Text="Yeni Stok Miktarı:" Foreground="#A0A0A0" Margin="0,0,0,5"/>
-                <TextBox Name="txtYeniStok" Background="#252525" Foreground="White" BorderBrush="#00FF41" Padding="10" FontSize="16" Margin="0,0,0,20"/>
+                <TextBlock Text="Gelen Mal / Eklenecek Miktar (+):" Foreground="#F1C40F" Margin="0,0,0,5" FontWeight="Bold"/>
+                <TextBox Name="txtYeniStok" Background="#252525" Foreground="White" BorderBrush="#F1C40F" Padding="10" FontSize="16" Margin="0,0,0,20"/>
 
-                <Button Name="btnStokGuncelle" Content="🔄 STOĞU GÜNCELLE" Background="#28A745" Foreground="White" Height="50" FontWeight="Bold" Click="btnStokGuncelle_Click"/>
+                <Button Name="btnStokGuncelle" Content="📦 STOĞA EKLE" Background="#28A745" Foreground="White" Height="50" FontWeight="Bold" Cursor="Hand" Click="btnStokGuncelle_Click"/>
             </StackPanel>
         </StackPanel>
     </Grid>

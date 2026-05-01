@@ -11,9 +11,11 @@
         </Grid.ColumnDefinitions>
 
         <GroupBox Header="GÜNCEL SATIŞ SEPETİ" Foreground="#00FF41" BorderBrush="#333" Margin="5">
+            <!-- CellEditEnding Eklendi -->
             <DataGrid Name="dgSepet" Background="#1E1E1E" Foreground="White" RowBackground="#1E1E1E"
                       AutoGenerateColumns="False" HeadersVisibility="Column" GridLinesVisibility="Horizontal"
-                      HorizontalGridLinesBrush="#333" BorderThickness="0" FontSize="18" FontWeight="SemiBold">
+                      HorizontalGridLinesBrush="#333" BorderThickness="0" FontSize="18" FontWeight="SemiBold"
+                      CellEditEnding="dgSepet_CellEditEnding">
                 <DataGrid.Resources>
                     <Style TargetType="DataGridColumnHeader">
                         <Setter Property="Background" Value="#252525"/>
@@ -26,11 +28,12 @@
                     </Style>
                 </DataGrid.Resources>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Ürün Adı" Binding="{Binding UrunAdi}" Width="2*"/>
-                    <DataGridTextColumn Header="Miktar" Binding="{Binding Miktar}" Width="*"/>
-                    <DataGridTextColumn Header="Birim" Binding="{Binding BirimMetni}" Width="0.5*"/>
-                    <DataGridTextColumn Header="Birim Fiyat" Binding="{Binding BirimFiyat, StringFormat='₺\{0:N2\}'}" Width="*"/>
-                    <DataGridTextColumn Header="Toplam" Binding="{Binding ToplamTutar, StringFormat='₺\{0:N2\}'}" Width="*"/>
+                    <DataGridTextColumn Header="Ürün Adı" Binding="{Binding UrunAdi}" IsReadOnly="True" Width="2*"/>
+                    <!-- UpdateSourceTrigger=PropertyChanged Eklendi -->
+                    <DataGridTextColumn Header="Miktar" Binding="{Binding Miktar, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+                    <DataGridTextColumn Header="Birim" Binding="{Binding BirimMetni}" IsReadOnly="True" Width="0.5*"/>
+                    <DataGridTextColumn Header="Birim Fiyat" Binding="{Binding BirimFiyat, StringFormat='₺\{0:N2\}', UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+                    <DataGridTextColumn Header="Toplam" Binding="{Binding ToplamTutar, StringFormat='₺\{0:N2\}'}" IsReadOnly="True" Width="*"/>
                 </DataGrid.Columns>
             </DataGrid>
         </GroupBox>
@@ -48,8 +51,11 @@
             <StackPanel Grid.Row="1">
                 <Border Background="#1E1E1E" CornerRadius="10" Padding="15" Margin="0,0,0,15" BorderBrush="#00FF41" BorderThickness="1">
                     <StackPanel HorizontalAlignment="Center">
-                        <TextBlock Text="GENEL TOPLAM" Foreground="#A0A0A0" FontSize="14" HorizontalAlignment="Center"/>
-                        <TextBlock Name="txtGenelToplam" Text="₺0,00" Foreground="#00FF41" FontSize="48" FontWeight="Bold"/>
+                        <TextBlock Text="GENEL TOPLAM (Manuel Düzenlenebilir)" Foreground="#A0A0A0" FontSize="12" HorizontalAlignment="Center"/>
+                        <!-- TextBlock YERİNE TextBox Eklendi -->
+                        <TextBox Name="txtGenelToplam" Text="₺0,00" Foreground="#00FF41" FontSize="48" FontWeight="Bold"
+                                 Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Center"
+                                 GotFocus="txtGenelToplam_GotFocus" LostFocus="txtGenelToplam_LostFocus"/>
                     </StackPanel>
                 </Border>
 

@@ -1,0 +1,112 @@
+﻿<Window x:Class="PcKod.UI.Views.AnalizWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="30 Günlük Satış Analizi ve Kritik Stok" Height="700" Width="1100"
+        Background="#1A1D21" WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1.5*"/>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0" Background="#21252B" CornerRadius="8" Padding="15">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="📈 SON 30 GÜN - EN ÇOK SATAN ÜRÜNLER" Foreground="#3498DB" FontSize="20" FontWeight="Bold" Margin="0,0,0,20"/>
+
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl Name="icGrafik">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,0,0,15">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="25"/>
+                                    </Grid.RowDefinitions>
+
+                                    <Grid Margin="0,0,0,5">
+                                        <TextBlock Text="{Binding UrunAdi}" Foreground="White" FontSize="14" HorizontalAlignment="Left"/>
+                                        <TextBlock Text="{Binding MiktarGosterim}" Foreground="#A0A0A0" FontSize="14" HorizontalAlignment="Right" FontWeight="Bold"/>
+                                    </Grid>
+
+                                    <Border Grid.Row="1" Background="#2C3E50" CornerRadius="4" HorizontalAlignment="Stretch">
+                                        <Border Background="#3498DB" CornerRadius="4" HorizontalAlignment="Left"
+                                                Width="{Binding GrafikGenişligi}" RenderTransformOrigin="0,0.5">
+                                            <Border.RenderTransform>
+                                                <ScaleTransform ScaleX="0" ScaleY="1" />
+                                            </Border.RenderTransform>
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Style.Triggers>
+                                                        <EventTrigger RoutedEvent="Loaded">
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" 
+                                                                                     To="1" Duration="0:0:1.5">
+                                                                        <DoubleAnimation.EasingFunction>
+                                                                            <CubicEase EasingMode="EaseOut"/>
+                                                                        </DoubleAnimation.EasingFunction>
+                                                                    </DoubleAnimation>
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </EventTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                        </Border>
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+
+        <Border Grid.Column="2" Background="#21252B" CornerRadius="8" Padding="15">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="⚠️ KRİTİK STOK UYARILARI" Foreground="#E74C3C" FontSize="20" FontWeight="Bold" Margin="0,0,0,5"/>
+                <TextBlock Grid.Row="1" Text="(Tavuk: &lt;10kg, Diğer Et: &lt;15kg, Adet: &lt;5)" Foreground="#A0A0A0" FontSize="12" Margin="0,0,0,15"/>
+
+                <DataGrid Name="dgKritikStok" Grid.Row="2" Background="Transparent" Foreground="White" RowBackground="Transparent" AlternatingRowBackground="#2A2E35"
+                          AutoGenerateColumns="False" IsReadOnly="True" HeadersVisibility="Column" GridLinesVisibility="Horizontal"
+                          HorizontalGridLinesBrush="#333" BorderThickness="0" FontSize="14">
+                    <DataGrid.Resources>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="Background" Value="#252525"/>
+                            <Setter Property="Foreground" Value="#E74C3C"/>
+                            <Setter Property="Padding" Value="10,5"/>
+                        </Style>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Padding" Value="5"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                        </Style>
+                    </DataGrid.Resources>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Ürün" Binding="{Binding UrunAdi}" Width="2*"/>
+                        <DataGridTextColumn Header="Kalan" Binding="{Binding KalanGosterim}" Width="*">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="#E74C3C"/>
+                                    <Setter Property="FontWeight" Value="Bold"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
