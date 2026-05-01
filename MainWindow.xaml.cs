@@ -44,7 +44,7 @@ namespace PcKod.UI
         private void ProcessScannedInput(string rawInput)
         {
             // Helpers katmanındaki BarcodeParser kullanılarak terazi barkodu ayrıştırılıyor
-            var (urunKodu, miktar) = BarcodeParser.ParseWeightBarcode(rawInput);
+            var (urunKodu, miktar) = BarcodeParser.Parse(rawInput);
 
             using (var db = new SqliteConnection(DatabaseHelper.ConnectionString))
             {
