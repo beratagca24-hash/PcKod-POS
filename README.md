@@ -14,6 +14,8 @@
 
 **.NET 8 & WPF tabanlı, barkod okuyucu uyumlu, entegre terazi desteği sunan ve çevrimdışı (offline-first) çalışabilen modern masaüstü satış sistemidir.**
 
+<img width="1000" height="700" alt="Ekran görüntüsü 2026-05-02 022404" src="https://github.com/user-attachments/assets/fcb46f0f-8557-46a4-af05-ebfc3502cf38" />
+
 </div>
 
 ---
@@ -37,6 +39,9 @@
 
 * 📊 **Finansal ve Stok Analitiği**
   Satış verilerini analiz ederek son 30 günlük işlem hacmini grafiksel olarak görselleştirir. Ürün tiplerine (adet/kg) göre özel olarak belirlenen eşik değerleri üzerinden kritik stok uyarıları üretir.
+
+<img width="1000" height="700" alt="Ekran görüntüsü 2026-05-02 022457" src="https://github.com/user-attachments/assets/14963e4b-6716-4d09-90f6-078d843e77e2" />
+
 
 * 📑 **Dışa Aktarım ve Raporlama**
   Gün sonu finansal verilerini, uygulanan iskontoları ve net hasılat dökümünü `ClosedXML` altyapısı ile Excel (.xlsx) formatında raporlar.
