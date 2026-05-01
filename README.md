@@ -58,15 +58,20 @@ Proje, kodun ölçeklenebilirliğini ve bakım kolaylığını sağlamak adına 
 ---
 
 ## 📂 Dosya Organizasyonu
-```bash
-/PcKod.UI
-  /Data         # DatabaseHelper.cs (Merkezi bağlantı ve veritabanı inşası)
-  /Helpers      # BarcodeParser.cs, CurrencyHelper.cs (Bağımsız iş mantığı)
-  /Models       # Urun.cs, Firma.cs, SepetUrun.cs (Veri modelleri)
-  /Views        # XAML arayüzleri ve UI arka plan kodları
-  App.xaml      # Uygulama yaşam döngüsü
-  ```
-  ⚙️ Kurulum ve Derleme
+
+```text
+PcKod.UI/
+ ├── Data/         # DatabaseHelper.cs (Merkezi bağlantı ve veritabanı inşası)
+ ├── Helpers/      # BarcodeParser.cs, CurrencyHelper.cs (Bağımsız iş mantığı)
+ ├── Models/       # Urun.cs, Firma.cs, SepetUrun.cs (Veri modelleri)
+ ├── Views/        # XAML arayüzleri ve UI arka plan kodları
+ └── App.xaml      # Uygulama yaşam döngüsü
+```
+
+---
+
+## ⚙️ Kurulum ve Derleme
+
 Sistemi yerel ortamda çalıştırmak için aşağıdaki adımları izleyebilirsiniz:
 
 ```bash
@@ -79,14 +84,23 @@ cd PcKod.UI
 # 3. .sln dosyasını Visual Studio ile açın.
 # 4. Eksik NuGet paketlerini (Microsoft.Data.Sqlite, ClosedXML) geri yükleyin.
 # 5. Projeyi 'Release' konfigürasyonunda derleyin ve çalıştırın.
-Erişim Notu:
-İlk kurulum aşamasında uygulamanın Kritik Ayarlar ve Raporlama bölümlerine erişim için varsayılan yetkili şifresi 1234 olarak yapılandırılmıştır.
- ```
-👨‍💻 Geliştirici
-Berat Ağca
+```
 
-GitHub: @beratagca24-hash
+> 💡 **Erişim Notu:** 
+> İlk kurulum aşamasında uygulamanın Kritik Ayarlar ve Raporlama bölümlerine erişim için varsayılan yetkili şifresi **`1234`** olarak yapılandırılmıştır.
 
-LinkedIn: [Berat Ağca]
+---
 
-(Not: Sistemin terazi entegrasyonu ve kararlılık testleri, pilot bölge olarak Öz Biga Et ve Şarküteri altyapısında gerçekleştirilmiştir.)
+## 👨‍💻 Geliştirici
+
+* **Berat Ağca**
+  * **GitHub:** [@beratagca24-hash](https://github.com/beratagca24-hash)
+  * **LinkedIn:** [Berat Ağca](https://www.linkedin.com/in/berat-ağca-0a61a5342/)
+
+*(Not: Sistemin terazi entegrasyonu ve kararlılık testleri, pilot bölge olarak Öz Biga Et ve Şarküteri altyapısında gerçekleştirilmiştir.)*
+
+---
+
+## 📝 Lisans
+
+Bu proje **MIT Lisansı** altında lisanslanmıştır. Kullanım hakları ve dağıtım detayları için `LICENSE` dosyasını inceleyebilirsiniz.
