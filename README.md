@@ -58,14 +58,14 @@ Proje, kodun ölçeklenebilirliğini ve bakım kolaylığını sağlamak adına 
 ---
 
 ## 📂 Dosya Organizasyonu
-
 ```text
 PcKod.UI/
- ├── Data/         # DatabaseHelper.cs (Merkezi bağlantı ve veritabanı inşası)
- ├── Helpers/      # BarcodeParser.cs, CurrencyHelper.cs (Bağımsız iş mantığı)
- ├── Models/       # Urun.cs, Firma.cs, SepetUrun.cs (Veri modelleri)
- ├── Views/        # XAML arayüzleri ve UI arka plan kodları
- └── App.xaml      # Uygulama yaşam döngüsü
+ ├── Data/             # DatabaseHelper.cs (Merkezi bağlantı ve veritabanı inşası)
+ ├── Helpers/          # BarcodeParser.cs, CurrencyHelper.cs (Bağımsız iş mantığı)
+ ├── Models/           # Urun.cs, Firma.cs, SepetUrun.cs (Veri modelleri)
+ ├── Views/            # XAML arayüzleri ve UI arka plan kodları
+ ├── App.xaml          # Uygulama yaşam döngüsü
+ └── logo_karanlik.ico # Uygulama ikonu ve varsayılan tema görseli
 ```
 
 ---
@@ -73,7 +73,6 @@ PcKod.UI/
 ## ⚙️ Kurulum ve Derleme
 
 Sistemi yerel ortamda çalıştırmak için aşağıdaki adımları izleyebilirsiniz:
-
 ```bash
 # 1. Depoyu yerel makinenize klonlayın
 git clone [https://github.com/beratagca24-hash/PcKod.UI.git](https://github.com/beratagca24-hash/PcKod.UI.git)
@@ -98,6 +97,8 @@ cd PcKod.UI
   * **LinkedIn:** [Berat Ağca](https://www.linkedin.com/in/berat-ağca-0a61a5342/)
 
 *(Not: Sistemin terazi entegrasyonu ve kararlılık testleri, pilot bölge olarak Öz Biga Et ve Şarküteri altyapısında gerçekleştirilmiştir.)*
+
+> 💡 **Tema ve Özelleştirme:** Proje varsayılan tema ve ikon olarak, sistemin pilot testlerinin yapıldığı işletmenin kurumsal kimliğini barındırmaktadır. Sistemi kendi işletmenize entegre ederken, projenin ana dizininde bulunan `logo_karanlik.ico` dosyasını kendi markanıza ait görselle değiştirebilirsiniz.
 
 ---
 
